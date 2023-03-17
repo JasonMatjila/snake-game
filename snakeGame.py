@@ -11,7 +11,7 @@ random.speed()
 
 # we will declare global constant definitions
 
-speed = 0.30
+SPEED = 0.30
 SNAKE_SIZE = 9
 APPLE_SIZE = SNAKE_SIZE #we willl keep both food and the size the same
 SEPARATION = 10 #separation betwwen two paxels
@@ -86,7 +86,60 @@ class snake:
         blackBox.direction = KEY["up"]
         blackBox.color = "NULL"
         self.stack.append(blackBox)
+        
+        
+    #we will define moves of the snake
+    
+    def move(self):
+        last_element = len(self.stack) -1
+        while(last_element != 0):
+            self.stack[last_element].direction = self.stack[last_element].direction
+            self.stack[last_element].x = self.stack[last_element -1].x 
+            self.stack[last_element].y = self.stack[last_element-1].y 
+            last_element -=1
+            if(len(self.stack) < 2):
+                last_element = self
+            else:
+                last_segment = self.pop(last_element)
+            last_segment.directiom = self.stack[0].direction
+            if(self.stack[0].direction == KEY["UP"]):
+                last_segment.y = self.stack[0].y - (SPEED * FPS)
+            elif(self.stack[0].direction == KEY["DOWN"]):
+                last_segment.y = self.stack[0].y + (SPEED * FPS)
+            elif(self.stack[0].direction == KEY["LEFT"]):
+                last_segment.x = self.stack[0].x - (SPEED * FPS)
+            elif(self.stack[0].direction == KEY["RIGHT"]):
+                last_segment.x = self.stack[0].x + (SPEED * FPS)
+                self.stack.insert(0,last_segment)
+    
+    def getHead(self): #head of the snake
+        return(self.stack[0]) #it will always be 0 index
+    
+     #now when the snake eat its food it will grow so for that we will add that food to stack
+    
+    def grow(self):
+        last_element = len(self.stack) -1
+        self.stack[last_element].direction = self.stack[last_element].direction
+        if(self.stack[last_element].direction == KEY["UP"]):
+            newSegment = segment(self.stack[last_element].x, self.stack[last_element].y + SNAKE_SIZE)
+            blackBox = segment(newSegment.x , newSegment.y-SEPARATION)
+            
+        elif(self.stack[last_element].direction == KEY["DOWN"]):
+            newSegment = segment(self.stack[last_element].x, self.stack[last_element].y +SNAKE_SIZE)
+            blackBox = segment(newSegment.x, newSegment.y+SEPARATION)
 
+        elif(self.stack[last_element].direction == KEY["LEFT"]):
+            newSegment = segment(self.stack[last_element].x - SNAKE_SIZE, self.stack[last_element].y) 
+            blackBox = segment(newSegment.x - SEPARATION, newSegment.y)
+            
+        elif(self.stack[last_element].direction == KEY["RIGHT"]):
+            newSegment = segment(self.stack[last_element].x + SNAKE_SIZE, self.stack[last_element].y) 
+            blackBox = segment(newSegment.x + SEPARATION, newSegment.y)
+            
+        blackBox = "NULL"
+        self.stack.append(newSegment)
+        self.stack.append(blackBox)
+            
 #we will define keys
 
 def getkey():
